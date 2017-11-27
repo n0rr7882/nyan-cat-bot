@@ -16,55 +16,52 @@ const GREETING_WORDS = {
 
 const DAY = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
 
-bot.on('*', msg => {
-    console.log(msg);
-    bot.sendMessage(msg.chat.id, 'Hello!');
+bot.on(/^(hello|hi|hey|안녕|ㅎㅇ)/gi, msg => {
+    let now = moment(new Date).tz('Asia/Seoul').hour();
+    let timeZone = undefined;
+
+    if (now >= 5 && now < 11) timeZone = 'morning';
+    if (now >= 11 && now < 17) timeZone = 'afternoon';
+    if (now >= 17 && now < 21) timeZone = 'evening';
+    if ((now >= 21 && now < 24) || (now >= 0 && now < 5)) timeZone = 'night';
+
+    msg.reply.text(`${GREETING_WORDS[timeZone][Math.round(Math.random() * 3)]} ${cool()}`);
 });
 
-let autochatThread = undefined;
+bot.on(/(bye|잘가|ㅂㅂ|ㅃ)/gi, msg => {
+    msg.reply.text(`ㅂㅂ! ${cool()}`);
+});
+
+bot.on(/(지금|현재)?(.\s?)(몇(\s?)(시|분|초)|시(간|각))/g, msg => {
+    let now = moment(new Date).tz('Asia/Seoul');
+    msg.reply.text(`${(now.hour() / 12) ? '오후' : '오전'} ${now.hour() % 12}시 ${now.minute()}분 ${now.second()}초야!`);
+});
+
+bot.on(/오늘((이|은|의?)\s)(며칠|몇일|날짜|언제|무슨날)/g, msg => {
+    let now = moment(new Date).tz('Asia/Seoul');
+    msg.reply.text(`오늘은 ${now.date()}일 ${DAY[now.day()]}이야!`);
+});
+
+bot.on(/내일((이|은|의?)\s)(며칠|몇일|날짜|언제|무슨날)/g, msg => {
+    let now = moment(new Date).tz('Asia/Seoul');
+    msg.reply.text(`내일은 ${now.date()}일 ${DAY[(now.day() + 1) % 7]}이야!`);
+});
+
+/**
+ * auto chat (ai)
+ */
+
+let autochatThreads = {};
+
 bot.on(/\/ai (on|off)/, (msg, props) => {
     if (props.match[1] === 'on') {
-        if (!autochatThread) autochatThread = setInterval(() => {
-            if (Math.random() <= 0.05) bot.sendMessage(msg.chat.id, autochat.ai());
+        if (!autochatThreads[msg.chat.id]) autochatThreads[msg.chat.id] = setInterval(() => {
+            if (Math.random() > 0.999) bot.sendMessage(msg.chat.id, autochat.ai());
         }, 1000);
     } else {
-        if (autochatThread) clearInterval(autochatThread);
-        autochatThread = undefined;
+        if (autochatThreads[msg.chat.id]) clearInterval(autochatThreads[msg.chat.id]);
+        autochatThreads[msg.chat.id] = undefined;
     }
 });
 
 bot.start();
-
-// bot.onText(/(안녕|ㅎㅇ|하이|hi|hello)/, msg => {
-//     let now = moment(new Date).tz('Asia/Seoul').hour();
-//     let timeZone = undefined;
-
-//     if (now >= 5 && now < 11) timeZone = 'morning';
-//     if (now >= 11 && now < 17) timeZone = 'afternoon';
-//     if (now >= 17 && now < 21) timeZone = 'evening';
-//     if ((now >= 21 && now < 24) || (now >= 0 && now < 5)) timeZone = 'night';
-
-//     bot.sendMessage(msg.chat.id, `${GREETING_WORDS[timeZone][Math.round(Math.random() * 3)]} ${cool()}`);
-// })
-
-// bot.onText(/\/start/, msg => {
-//     bot.sendMessage(msg.chat.id, "Welcome!");
-// });
-
-// bot.onText(/\/time/, msg => {
-//     let now = new Date();
-//     bot.sendMessage(msg.chat.id, `현재 시각은 ${now.getHours()}시 ${now.getMinutes()}분 ${now.getSeconds()}초야!`);
-// });
-
-// bot.onText(/\/date/, msg => {
-//     let now = new Date();
-//     bot.sendMessage(msg.chat.id, `오늘은 ${now.getMonth() + 1}월 ${now.getDate()}일 ${DAY[now.getDay()]}이야!`);
-// });
-
-// bot.onText(/\/echo (.+)/, (msg, match) => {
-//     bot.sendMessage(msg.chat.id, match[1]);
-// });
-
-// bot.onText(/\/calc ([0-9-+=*\/()]+)/, (msg, match) => {
-//     bot.sendMessage(msg.chat.id, eval(match[1]));
-// });
