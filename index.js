@@ -3,6 +3,7 @@ const moment = require('moment-timezone');
 const cool = require('cool-ascii-faces');
 
 const autochat = require('./autochat');
+const gridxy = require('./tools/gridxy');
 
 const TOKEN = process.env.TOKEN ? process.env.TOKEN : require('./config/config').token;
 const bot = new TeleBot(TOKEN);
@@ -15,6 +16,8 @@ const GREETING_WORDS = {
 };
 
 const DAY = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
+
+const NYAN = ['냥→냥↗️냐냥- 냥↘️냐냐냥↘️냥→냥↗️', `냥- 냐냐냐냐냐냥↗️냐냐냐냐냐냐냐냥→ 냥- 냥↗️`, `냐냐냐냥↘️냐냐냐냐냐냐냐냐냥↗️ 냥→`, `냐냥↗️냐냐냥→냥↘️냥`];
 
 bot.on(/^(hi|hello|hey)|(안녕|ㅎㅇ)/gi, msg => {
     let now = moment(new Date).tz('Asia/Seoul').hour();
@@ -50,6 +53,24 @@ bot.on(/내일((이|은|의?)\s)(며칠|몇일|날짜|언제|무슨날)/g, msg =
 bot.on(/날씨 (.+)/, async (msg, props) => {
     const whather = await autochat.getWhather(props.match[1]);
     if (props.match[1]) msg.reply.text(whather);
+});
+
+bot.on(/\/gridxy ([0-9]+) ([0-9]+)/, (msg, props) => {
+    const mapping = gridxy.map(props.match[1], props.match[2])
+    msg.reply.text(`{ x: ${mapping.x}, y: ${mapping.y} }`);
+});
+
+bot.on(/(한강|자살)/, async msg => {
+    const tempInfo = await autochat.getHanReverTemp();
+    msg.reply.text(tempInfo);
+});
+
+bot.on(/반가워/gi, msg => {
+    msg.reply.text(`나도 반가워! ${cool()}`);
+});
+
+bot.on(/(냥|냥냥|Nyan|nyan)(\s?)(캣|cat|Cat)?/gi, msg => {
+    msg.reply.text(NYAN[Math.round(Math.random() * 3)]);
 });
 
 /**

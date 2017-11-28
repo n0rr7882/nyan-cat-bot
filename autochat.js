@@ -47,7 +47,7 @@ const URLS = {
     '화천': 'http://www.kma.go.kr/wid/queryDFS.jsp?gridx=74&gridy=137',
     '서산': 'http://www.kma.go.kr/wid/queryDFS.jsp?gridx=52&gridy=107',
     '수원': 'http://www.kma.go.kr/wid/queryDFS.jsp?gridx=61&gridy=120'
-}
+};
 
 module.exports = {
 
@@ -79,7 +79,7 @@ module.exports = {
         let result = `오늘의 ${areaName} 날씨야!\n`;
 
         try {
-
+            const locationInfo = await rp(`http://maps.google.com/maps/api/geocode/json?address=${loc}`);
             const whatherXML = parser.parseFromString(await rp(url), "text/xml");
             const whatherData = {
                 hours: whatherXML.getElementsByTagName('hour'),
@@ -97,6 +97,25 @@ module.exports = {
             return `문제 발생! ${err.message}`;
         }
 
+    },
+
+    getHanReverTemp: async () => {
+        try {
+            const tempInfo = await rp(`http://hangang.dkserver.wo.tc`);
+            return `지금 한강 수온은 ${JSON.parse(tempInfo).temp}℃야!`;
+        } catch (err) {
+            return `문제 발생! ${err.message}`;
+        }
+    },
+
+    getJunggo: async thing => {
+        try {
+            const junggoHTML = parser.parseFromString(await rp(`http://m.bunjang.co.kr/search/products?q=${thing}`), 'text/html');
+            console.log(junggoHTML);
+
+        } catch (err) {
+            return `문제 발생! ${err.message}`
+        }
     }
 
 };
