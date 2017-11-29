@@ -65,7 +65,7 @@ bot.on(/(한강|자살)/, async msg => {
     msg.reply.text(tempInfo);
 });
 
-bot.on(/(중고|알아봐) (.+)/, async (msg, props) => {
+bot.on(/(중고|알아봐|알아봐줘) (.+)/, async (msg, props) => {
     const junggoInfo = await autochat.getJunggo(props.match[2]);
     msg.reply.text(junggoInfo);
 })
