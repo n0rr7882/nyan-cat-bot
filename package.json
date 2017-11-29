@@ -13,6 +13,7 @@
     "dom-parser": "^0.1.5",
     "moment-timezone": "^0.5.14",
     "request-promise": "^4.2.2",
-    "telebot": "^1.2.3"
+    "telebot": "^1.2.3",
+    "urlencode": "^1.1.0"
   }
 }

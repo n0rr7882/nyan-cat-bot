@@ -65,8 +65,17 @@ bot.on(/(한강|자살)/, async msg => {
     msg.reply.text(tempInfo);
 });
 
+bot.on(/(중고|알아봐) (.+)/, async (msg, props) => {
+    const junggoInfo = await autochat.getJunggo(props.match[2]);
+    msg.reply.text(junggoInfo);
+})
+
 bot.on(/반가워/gi, msg => {
     msg.reply.text(`나도 반가워! ${cool()}`);
+});
+
+bot.on(/(고마워|ㄱㅅ|감사)/gi, msg => {
+    msg.reply.text('ㅎㅎ');
 });
 
 bot.on(/(냥|냥냥|Nyan|nyan)(\s?)(캣|cat|Cat)?/gi, msg => {
