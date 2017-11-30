@@ -98,17 +98,19 @@ module.exports = {
             return result;
 
         } catch (err) {
-            return `문제 발생! ${err.message}`;
+            console.error('getWhather: ' + err.message);
+            return `ㅎㄷ 날씨서버가 이상해`;
         }
 
     },
 
-    getHanReverTemp: async () => {
+    getHanRiverTemp: async () => {
         try {
             const tempInfo = await rp(`http://hangang.dkserver.wo.tc`);
             return `지금 한강 수온은 ${JSON.parse(tempInfo).temp}℃야!`;
         } catch (err) {
-            return `문제 발생! ${err.message}`;
+            console.error('getHanRiverTemp: ' + err.message);
+            return `ㅎㄷ 모르겠어`;
         }
     },
 
@@ -134,7 +136,8 @@ module.exports = {
             return result;
 
         } catch (err) {
-            return `문제 발생! ${err.message}`;
+            console.error('getJunggo: ' + err.message);
+            return `ㅎㄷ 서버도 중고로 쓰나봐`;
         }
     },
 
@@ -157,7 +160,8 @@ module.exports = {
             return result;
 
         } catch (err) {
-            return `문제 발생! ${err.message}`;
+            console.error('getCafeteria: ' + err.message);
+            return `읭? 급식 못찾겠어`;
         }
     },
 
@@ -175,6 +179,7 @@ module.exports = {
             }
 
         } catch (err) {
+            console.error('calculate: ' + err.message);
             return '이걸 계산하라고 준거야?';
         }
 
