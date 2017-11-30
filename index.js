@@ -70,10 +70,15 @@ bot.on(/(중고|알아봐|알아봐줘) (.+)/, async (msg, props) => {
     msg.reply.text(junggoInfo);
 });
 
-bot.on(/급식/, async msg => {
+bot.on(/(급식|점심(밥?))/, async msg => {
     let now = moment(new Date).tz('Asia/Seoul').date();
     const cafeteriaInfo = await autochat.getCafeteria('B100000662', now);
     msg.reply.text(cafeteriaInfo);
+});
+
+bot.on(/(계산(해(줘?봐?)?)?|풀어(줘?봐?))\s(.+)/, (msg, props) => {
+    const result = autochat.calculate(props.match[5]);
+    msg.reply.text(result);
 });
 
 bot.on(/반가워/gi, msg => {

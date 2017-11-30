@@ -101,6 +101,16 @@ module.exports = {
         } catch(err) {
             return `문제 발생! ${err.message}`;
         }
+    },
+
+    calculate: equation => {
+
+        if(/^(?=.*)[0-9()*/+.-\s]+$/.exec(equation)) {
+            return `계산 결과: ${eval(equation)}`;
+        } else {
+            return '숫자만 계산할 수 있어ㅠㅠ';
+        }
+
     }
 
 };
