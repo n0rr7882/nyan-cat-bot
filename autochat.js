@@ -98,7 +98,7 @@ module.exports = {
 
             return result;
 
-        } catch(err) {
+        } catch (err) {
             return `문제 발생! ${err.message}`;
         }
     },
@@ -106,7 +106,14 @@ module.exports = {
     calculate: equation => {
 
         if(/^(?=.*)[0-9()*/+.-\s]+$/.exec(equation)) {
-            return `계산 결과: ${eval(equation)}`;
+            try {
+
+                const result = eval(equation);
+                return `계산 결과: ${result}`;
+
+            } catch (err) {
+                return '이걸 계산하라고 준거야?';
+            }
         } else {
             return '숫자만 계산할 수 있어ㅠㅠ';
         }
