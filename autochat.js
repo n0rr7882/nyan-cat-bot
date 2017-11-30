@@ -34,7 +34,8 @@ module.exports = {
                 wss: whatherXML.getElementsByTagName('ws')
             };
 
-            for (let i = 0; (i < whatherData.hours.length && i < 8); i++) {
+            for (let i = 0;
+                (i < whatherData.hours.length && i < 8); i++) {
                 result += `${whatherData.hours[i].innerHTML}시 : [${whatherData.wfKors[i].innerHTML}] <${whatherData.temps[i].innerHTML}℃> ${Number(whatherData.wss[i].innerHTML).toFixed(1)}m/s\n`;
             }
             return result;
@@ -90,8 +91,8 @@ module.exports = {
 
             let cafeteriaHTML = parser.parseFromString(await rp(cafeteriaServer), 'text/html');
 
-            for(let i of cafeteriaHTML.getElementsByTagName('tbody')[0].getElementsByTagName('div')) {
-                if(i.innerHTML && i.innerHTML.trim().substring(0,3).match(RegExp(`^${date}<`))) {
+            for (let i of cafeteriaHTML.getElementsByTagName('tbody')[0].getElementsByTagName('div')) {
+                if (i.innerHTML && i.innerHTML.trim().substring(0, 3).match(RegExp(`^${date}<`))) {
                     result += i.innerHTML.replace(/<br\/>/g, '\n');
                 }
             }
@@ -105,17 +106,19 @@ module.exports = {
 
     calculate: equation => {
 
-        if(/^(?=.*)[0-9()*/+.-\s]+$/.exec(equation)) {
-            try {
+        try {
+
+            if (/^(?=.*)[0-9()*/+.-\s]+$/.exec(equation)) {
 
                 const result = eval(equation);
                 return `계산 결과: ${result}`;
 
-            } catch (err) {
-                return '이걸 계산하라고 준거야?';
+            } else {
+                return '숫자만 계산할 수 있어ㅠㅠ';
             }
-        } else {
-            return '숫자만 계산할 수 있어ㅠㅠ';
+
+        } catch (err) {
+            return '이걸 계산하라고 준거야?';
         }
 
     }
