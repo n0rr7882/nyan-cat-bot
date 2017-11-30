@@ -1,9 +1,24 @@
 const rp = require('request-promise');
+const moment = require('moment-timezone');
 const urlencode = require('urlencode');
 const DOMParser = require('dom-parser');
+const cool = require('cool-ascii-faces');
+
+const gridxy = require('./tools/gridxy');
+
 const parser = new DOMParser();
 
 const SIMSIM = ['심심하다', '아 심심하네', '심심ㅠ', '뭐하지', '할거추천좀'];
+
+const GREETING_WORDS = {
+    'morning': ['안녕!', '좋은아침!', '보이루', 'Good morning!'],
+    'afternoon': ['안녕!', '맛있는 점심', '안녕~', '개꿀~'],
+    'evening': ['안녕!', '안녕~ 빨리 집가!', '완벽한 하루였다..', 'ㅎㅇㅎㅇ!'],
+    'night': ['안녕!', '힉, 이시간까지 뭐하는거야!', '곧 잘시간', '굳이브닝!']
+};
+
+const DAY = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
+
 
 module.exports = {
 
@@ -11,7 +26,48 @@ module.exports = {
         return SIMSIM[Math.round(Math.random() * 4)];
     },
 
-    reaction: () => {
+    react: payload => {
+
+        if (/^(hi|hello|hey)|(안녕|ㅎㅇ)/gi.exec(payload)) {
+
+            const now = moment(new Date).tz('Asia/Seoul').hour();
+            let timeZone = undefined;
+
+            if (now >= 5 && now < 11) timeZone = 'morning';
+            if (now >= 11 && now < 17) timeZone = 'afternoon';
+            if (now >= 17 && now < 21) timeZone = 'evening';
+            if ((now >= 21 && now < 24) || (now >= 0 && now < 5)) timeZone = 'night';
+
+            return `${GREETING_WORDS[timeZone][Math.round(Math.random() * 3)]} ${cool()}`;
+
+        } else if (/(bye|잘가|잘자|굿밤|굳밤|ㅂㅂ|ㅃ)/gi.exec(payload)) {
+
+            return `ㅂㅂ! ${cool()}`;
+
+        } else if (/(지금|현재)?(.\s?)(몇(\s?)(시|분|초)|시(간|각))/g.exec(payload)) {
+
+            const now = moment(new Date).tz('Asia/Seoul');
+            return `${Math.floor(now.hour() / 12) ? '오후' : '오전'} ${now.hour() % 12}시 ${now.minute()}분 ${now.second()}초야!`;
+
+        } else if (/오늘((이|은|의?)\s)(며칠|몇일|날짜|언제|무슨날)/g.exec(payload)) {
+
+            const now = moment(new Date).tz('Asia/Seoul');
+            return `오늘은 ${now.date()}일 ${DAY[now.day()]}이야!`;
+
+        } else if (/내일((이|은|의?)\s)(며칠|몇일|날짜|언제|무슨날)/g.exec(payload)) {
+
+            const now = moment(new Date).tz('Asia/Seoul');
+            return `내일은 ${now.date() + 1}일 ${DAY[(now.day() + 1) % 7]}이야!`;
+
+        } else if (/반가워/gi.exec(payload)) {
+
+            return `나도 반가워! ${cool()}`;
+
+        } else if (/(고마워|ㄱㅅ|감사)/gi.exec(payload)) {
+
+            return 'ㅎㅎ';
+
+        } else return undefined;
 
     },
 
@@ -25,8 +81,9 @@ module.exports = {
             if (areaData.results.length === 0) return `${area} 어딘지 모르겠어`;
             else locInfo = areaData.results[0].geometry.location;
 
-            const url = `http://www.kma.go.kr/wid/queryDFS.jsp?gridx=${Number(locInfo.lat).toFixed(0)}&gridy=${Number(locInfo.lng).toFixed(0)}`
-            const whatherXML = parser.parseFromString(await rp(url), "text/xml");
+            const gridInfo = gridxy.map(Number(locInfo.lat), Number(locInfo.lng));
+            const whatherServer = `http://www.kma.go.kr/wid/queryDFS.jsp?gridx=${gridInfo.x.toFixed(0)}&gridy=${gridInfo.y.toFixed(0)}`;
+            const whatherXML = parser.parseFromString(await rp(whatherServer), "text/xml");
             const whatherData = {
                 hours: whatherXML.getElementsByTagName('hour'),
                 temps: whatherXML.getElementsByTagName('temp'),
@@ -89,9 +146,9 @@ module.exports = {
 
         try {
 
-            let cafeteriaHTML = parser.parseFromString(await rp(cafeteriaServer), 'text/html');
-
-            for (let i of cafeteriaHTML.getElementsByTagName('tbody')[0].getElementsByTagName('div')) {
+            const cafeteriaHTML = parser.parseFromString(await rp(cafeteriaServer), 'text/html');
+            const cafeteriaList = cafeteriaHTML.getElementsByTagName('tbody')[0].getElementsByTagName('div');
+            for (let i of cafeteriaList) {
                 if (i.innerHTML && i.innerHTML.trim().substring(0, 3).match(RegExp(`^${date}<`))) {
                     result += i.innerHTML.replace(/<br\/>/g, '\n');
                 }
