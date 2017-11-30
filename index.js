@@ -47,11 +47,11 @@ bot.on(/오늘((이|은|의?)\s)(며칠|몇일|날짜|언제|무슨날)/g, msg =
 
 bot.on(/내일((이|은|의?)\s)(며칠|몇일|날짜|언제|무슨날)/g, msg => {
     let now = moment(new Date).tz('Asia/Seoul');
-    msg.reply.text(`내일은 ${now.date()}일 ${DAY[(now.day() + 1) % 7]}이야!`);
+    msg.reply.text(`내일은 ${now.date() + 1}일 ${DAY[(now.day() + 1) % 7]}이야!`);
 });
 
-bot.on(/날씨 (.+)/, async (msg, props) => {
-    const whather = await autochat.getWhather(props.match[1]);
+bot.on(/(날씨|whather) (.+)/i, async (msg, props) => {
+    const whather = await autochat.getWhather(props.match[2]);
     if (props.match[1]) msg.reply.text(whather);
 });
 
@@ -68,7 +68,13 @@ bot.on(/(한강|자살)/, async msg => {
 bot.on(/(중고|알아봐|알아봐줘) (.+)/, async (msg, props) => {
     const junggoInfo = await autochat.getJunggo(props.match[2]);
     msg.reply.text(junggoInfo);
-})
+});
+
+bot.on(/급식/, async msg => {
+    let now = moment(new Date).tz('Asia/Seoul').date();
+    const cafeteriaInfo = await autochat.getCafeteria('B100000662', now);
+    msg.reply.text(cafeteriaInfo);
+});
 
 bot.on(/반가워/gi, msg => {
     msg.reply.text(`나도 반가워! ${cool()}`);

@@ -76,7 +76,30 @@ module.exports = {
             return result;
 
         } catch (err) {
-            return `문제 발생! ${err.message}`
+            return `문제 발생! ${err.message}`;
+        }
+    },
+
+    getCafeteria: async (schoolCode, date) => {
+
+        const cafeteriaServer = `http://stu.sen.go.kr/sts_sci_md00_001.do?schulCode=${schoolCode}&schulCrseScCode=4&schulKndScCode=04&schMmealScCode=1`;
+
+        let result = `* 오늘의 급식이야!\n\n`;
+
+        try {
+
+            let cafeteriaHTML = parser.parseFromString(await rp(cafeteriaServer), 'text/html');
+
+            for(let i of cafeteriaHTML.getElementsByTagName('tbody')[0].getElementsByTagName('div')) {
+                if(i.innerHTML && i.innerHTML.trim().substring(0,3).match(RegExp(`^${date}<`))) {
+                    result += i.innerHTML.replace(/<br\/>/g, '\n');
+                }
+            }
+
+            return result;
+
+        } catch(err) {
+            return `문제 발생! ${err.message}`;
         }
     }
 
