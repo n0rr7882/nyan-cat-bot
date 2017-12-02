@@ -17,7 +17,7 @@ bot.on(/(날씨|whather) (.+)/i, async (msg, props) => {
     msg.reply.text(whather);
 });
 
-bot.on(/한강/, async msg => {
+bot.on(/(한강|퐁당)/, async msg => {
     const tempInfo = await autochat.getHanRiverTemp();
     msg.reply.text(tempInfo);
 });

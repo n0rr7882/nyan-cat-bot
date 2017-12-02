@@ -116,11 +116,13 @@ module.exports = {
 
     getJunggo: async thing => {
 
+        const junggoServer = `http://m.bunjang.co.kr/search/products?q=${urlencode(thing)}`;
+
         let result = ` * ${thing} 중고 시세야!\n\n`;
 
         try {
 
-            const junggoHTML = parser.parseFromString(await rp(`http://m.bunjang.co.kr/search/products?q=${urlencode(thing)}`), 'text/html');
+            const junggoHTML = parser.parseFromString(await rp(junggoServer), 'text/html');
             const goodsinfo = junggoHTML.getElementsByClassName('goodsinfo');
 
             if (goodsinfo.length === 0) return `${thing}는 안보이는 것 같아!`;
