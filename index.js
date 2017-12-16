@@ -43,9 +43,10 @@ bot.on(/(계산(해(줘?봐?)?)?|풀어(줘?봐?))\s(.+)/, (msg, props) => {
     msg.reply.text(result);
 });
 
-bot.on(/(.+)(이|가)\s?어디(지|더라)/, (msg, props) => {
-    const mapUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${props.match[1]}&size=500x500`;
-    bot.sendSticker(msg.chat.id, mapUrl);
+bot.on(/(.+)(이|가)\s?어디(지|더라)/, async (msg, props) => {
+    const location = await autochat.getLocation(props.match[1]);
+    if (location) bot.sendLocation(msg.chat.id, location, { replyToMessage: `여기가 ${props.match[1]}야!` });
+    else msg.reply.text('어딘지 잘 모르겠어...');
 });
 
 /**

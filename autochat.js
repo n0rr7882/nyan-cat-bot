@@ -167,6 +167,23 @@ module.exports = {
         }
     },
 
+    getLocation: async area => {
+
+        try {
+            const areaData = JSON.parse(await rp(`http://maps.google.com/maps/api/geocode/json?address=${urlencode(area)}`));
+
+            if (areaData.results.length === 0) return false;
+            else locInfo = areaData.results[0].geometry.location;
+
+            return [Number(locInfo.lat), Number(locInfo.lng)];
+
+        } catch (err) {
+            console.error('getLocation: ' + err.message);
+            return false;
+        }
+
+    },
+
     calculate: equation => {
 
         try {
