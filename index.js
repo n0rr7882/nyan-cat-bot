@@ -6,10 +6,13 @@ const autochat = require('./autochat');
 const TOKEN = process.env.TOKEN ? process.env.TOKEN : require('./config/config').token;
 const bot = new TeleBot(TOKEN);
 
+bot.on(/\/start/, msg => {
+    bot.sendSticker(msg.chat.id, 'https://upload.wikimedia.org/wikipedia/commons/9/99/Flying_cat_of_dath.gif');
+});
 
 bot.on('text', msg => {
     const reaction = autochat.react(msg.text);
-    if(reaction) msg.reply.text(reaction);
+    if (reaction) msg.reply.text(reaction);
 });
 
 bot.on(/(날씨|whather) (.+)/i, async (msg, props) => {
