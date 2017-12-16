@@ -147,7 +147,7 @@ module.exports = {
 
         const cafeteriaServer = `http://stu.sen.go.kr/sts_sci_md00_001.do?schulCode=${schoolCode}&schulCrseScCode=4&schulKndScCode=04&schMmealScCode=1`;
 
-        let result = `* 오늘의 급식이야!\n\n`;
+        let result = `* ${date}일의 급식이야!\n\n`;
 
         try {
 
