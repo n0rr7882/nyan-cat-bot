@@ -6,7 +6,7 @@ const autochat = require('./autochat');
 const TOKEN = process.env.TOKEN ? process.env.TOKEN : require('./config/config').token;
 const bot = new TeleBot(TOKEN);
 
-bot.on(/\/start/, msg => {
+bot.on([/\/start/, /\/nyan/], msg => {
     bot.sendSticker(msg.chat.id, 'https://upload.wikimedia.org/wikipedia/commons/9/99/Flying_cat_of_dath.gif');
 });
 
