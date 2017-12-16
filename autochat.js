@@ -130,7 +130,7 @@ module.exports = {
             for (let i = 0; i < goodsinfo.length; i++) {
                 const name = goodsinfo[i].getElementsByClassName('name')[0].innerHTML;
                 const price = goodsinfo[i].getElementsByTagName('em')[0].innerHTML;
-                if (name.replace(/\s/g, '').indexOf(thing.replace(/\s/g, '')) > -1) {
+                if (name.replace(/\s/g, '').toLowerCase().indexOf(thing.replace(/\s/g, '').toLowerCase()) > -1) {
                     result += `[${price}] ${(name.length < 15) ? name : name.substring(0, 15) + '...'}\n`;
                 }
             }
