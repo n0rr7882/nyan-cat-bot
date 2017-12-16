@@ -31,14 +31,9 @@ bot.on(/(중고|알아봐|알아봐줘) (.+)/, async (msg, props) => {
 });
 
 bot.on(/(오늘|내일|모레)?의?\s?(급식|점심(밥?))/, async (msg, props) => {
-    let now = undefined;
-    if (props.match[1] === '내일') {
-        now = moment(new Date).tz('Asia/Seoul').date(new Date().getDate() + 1);
-    } else if (props.match[1] === '모레') {
-        now = moment(new Date).tz('Asia/Seoul').date(new Date().getDate() + 2);
-    } else {
-        now = moment(new Date).tz('Asia/Seoul').date();
-    }
+    let now = now = moment(new Date).tz('Asia/Seoul').date();
+    if (props.match[1] === '내일') now += 1;
+    else if (props.match[1] === '모레') now += 2;
     const cafeteriaInfo = await autochat.getCafeteria('B100000662', now);
     msg.reply.text(cafeteriaInfo);
 });
