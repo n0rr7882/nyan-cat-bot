@@ -122,7 +122,7 @@ module.exports = {
 
         try {
 
-            const junggoHTML = parser.parseFromString(await rp(junggoServer), 'text/html');
+            const junggoHTML = parser.parseFromString(await rp(junggoServer, { headers: { 'User-Agent': 'iPhone' } }), 'text/html');
             const goodsinfo = junggoHTML.getElementsByClassName('goodsinfo');
 
             if (goodsinfo.length === 0) return `${thing}는 안보이는 것 같아!`;
